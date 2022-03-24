@@ -31,12 +31,24 @@ namespace FineLinesApp.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(Category obj)
         {
-            _db.Categories.Add(obj);
-            _db.SaveChanges();
-            //this takes you back to the index.
-            //-- If you want to redirect to action in another controller,
-            //you can just add controller name as second variable
-            return RedirectToAction("Index");
+            if(obj.Name == obj.DisplayOrder.ToString())
+            {
+                ModelState.AddModelError("name", "DisplayOrder and Name cannot match ");
+            }
+
+            //Validation
+            if (ModelState.IsValid)
+            {
+                _db.Categories.Add(obj);
+                _db.SaveChanges();
+                //this takes you back to the index.
+                //-- If you want to redirect to action in another controller,
+                //you can just add controller name as second variable
+                return RedirectToAction("Index");
+            }
+            return View(obj);
+
+
         }
     }
 }
