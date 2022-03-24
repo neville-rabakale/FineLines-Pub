@@ -41,6 +41,7 @@ namespace FineLinesApp.Controllers
             {
                 _db.Categories.Add(obj);
                 _db.SaveChanges();
+                TempData["success"] = "Category created successfully";
                 //this takes you back to the index.
                 //-- If you want to redirect to action in another controller,
                 //you can just add controller name as second variable
@@ -85,12 +86,56 @@ namespace FineLinesApp.Controllers
             {
                 _db.Categories.Update(obj);
                 _db.SaveChanges();
+                TempData["success"] = "Category edited successfully";
+
                 //this takes you back to the index.
                 //-- If you want to redirect to action in another controller,
                 //you can just add controller name as second variable
                 return RedirectToAction("Index");
             }
             return View(obj);
+        }
+
+        //GET
+        public IActionResult Delete(int? id)
+        {
+            //check for invalid id
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+
+            var categoryFromDb = _db.Categories.Find(id);
+            //check if item from Db has valid Id
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            return View(categoryFromDb);
+        }
+
+        //DELETE --Remocing items to Categories
+        //You can explicitly give action name by using actionName("String")
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeletePost(int?id)
+        {
+            var obj = _db.Categories.Find(id);
+            //check if item from Db has valid Id
+            if (obj == null)
+            {
+                return NotFound();
+            }
+
+            _db.Categories.Remove(obj);
+            _db.SaveChanges();
+            TempData["success"] = "Category deleted successfully";
+            //this takes you back to the index.
+            //-- If you want to redirect to action in another controller,
+            //you can just add controller name as second variable
+            return RedirectToAction("Index");
+
         }
     }
 }
