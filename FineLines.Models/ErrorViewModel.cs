@@ -1,4 +1,4 @@
-namespace FineLinesApp.Models
+namespace FineLines.Models
 {
     public class ErrorViewModel
     {

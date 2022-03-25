@@ -1,7 +1,7 @@
-﻿using FineLinesApp.Models;
+﻿using FineLines.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace FineLinesApp.Data
+namespace FineLines.DataAccess
 {
     public class ApplicationDbContext : DbContext
     {

@@ -1,5 +1,5 @@
-﻿using FineLinesApp.Data;
-using FineLinesApp.Models;
+﻿using FineLines.DataAccess;
+using FineLines.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FineLinesApp.Controllers

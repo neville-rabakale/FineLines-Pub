@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace FineLinesApp.Models
+namespace FineLines.Models
 {
     public class Category
     {
