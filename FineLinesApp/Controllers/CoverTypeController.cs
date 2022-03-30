@@ -5,11 +5,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FineLinesApp.Controllers
 {
-    public class CategoryController : Controller
+    public class CoverTypeController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        public CategoryController(IUnitOfWork unitOfWork)
+        public CoverTypeController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
 
@@ -17,8 +17,8 @@ namespace FineLinesApp.Controllers
         public IActionResult Index()
         {
             //retrieve from unitOfWork as list and pass to the CategotryList object
-            IEnumerable<Category> objCategoryList = _unitOfWork.Category.GetAll();
-            return View(objCategoryList);
+            IEnumerable<CoverType> objCoverTypeList = _unitOfWork.CoverType.GetAll();
+            return View(objCoverTypeList);
         }
 
         //GET
@@ -30,19 +30,15 @@ namespace FineLinesApp.Controllers
         //POST --Addind items to Categories
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Category obj)
+        public IActionResult Create(CoverType obj)
         {
-            if(obj.Name == obj.DisplayOrder.ToString())
-            {
-                ModelState.AddModelError("name", "DisplayOrder and Name cannot match ");
-            }
 
             //Validation
             if (ModelState.IsValid)
             {
-                _unitOfWork.Category.Add(obj);
+                _unitOfWork.CoverType.Add(obj);
                 _unitOfWork.Save();
-                TempData["success"] = "Category created successfully";
+                TempData["success"] = "CoverType created successfully";
                 //this takes you back to the index.
                 //-- If you want to redirect to action in another controller,
                 //you can just add controller name as second variable
@@ -61,7 +57,7 @@ namespace FineLinesApp.Controllers
             }
 
   //          var categoryFromDb = _unitOfWork.Categories.Find(id);
-            var categoryFromDb = _unitOfWork.Category.GetFirstOrDefault(u => u.Id == id );
+            var categoryFromDb = _unitOfWork.CoverType.GetFirstOrDefault(u => u.Id == id );
             //check if item from Db has valid Id
             if (id == null)
             {
@@ -74,21 +70,15 @@ namespace FineLinesApp.Controllers
         //POST --Addind items to Categories
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Category obj)
+        public IActionResult Edit(CoverType obj)
         {
-
-            //check if item from Db has valid Id
-            if (obj.Name == obj.DisplayOrder.ToString())
-            {
-                ModelState.AddModelError("name", "DisplayOrder and Name cannot match ");
-            }
 
             //Validation
             if (ModelState.IsValid)
             {
-                _unitOfWork.Category.Update(obj);
+                _unitOfWork.CoverType.Update(obj);
                 _unitOfWork.Save();
-                TempData["success"] = "Category edited successfully";
+                TempData["success"] = "CoverType edited successfully";
 
                 //this takes you back to the index.
                 //-- If you want to redirect to action in another controller,
@@ -107,7 +97,7 @@ namespace FineLinesApp.Controllers
                 return NotFound();
             }
 
-            var categoryFromDb = _unitOfWork.Category.GetFirstOrDefault(u => u.Id == id);
+            var categoryFromDb = _unitOfWork.CoverType.GetFirstOrDefault(u => u.Id == id);
             //check if item from Db has valid Id
             if (id == null)
             {
@@ -123,16 +113,16 @@ namespace FineLinesApp.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeletePost(int?id)
         {
-            var obj = _unitOfWork.Category.GetFirstOrDefault(u => u.Id == id);
+            var obj = _unitOfWork.CoverType.GetFirstOrDefault(u => u.Id == id);
             //check if item from Db has valid Id
             if (obj == null)
             {
                 return NotFound();
             }
 
-            _unitOfWork.Category.Remove(obj);
+            _unitOfWork.CoverType.Remove(obj);
             _unitOfWork.Save();
-            TempData["success"] = "Category deleted successfully";
+            TempData["success"] = "CoverType deleted successfully";
             //this takes you back to the index.
             //-- If you want to redirect to action in another controller,
             //you can just add controller name as second variable
