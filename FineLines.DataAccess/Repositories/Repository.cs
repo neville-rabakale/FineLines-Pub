@@ -16,6 +16,8 @@ namespace FineLines.DataAccess.Repositories
         public Repository(ApplicationDbContext db)
         {
             _db = db;
+            //loading forign key directly from the dbContext -- Commented out
+            //_db.Products.Include(u => u.Category).Include(u => u.CoverType);
             this.dbSet = _db.Set<T>();
         }
         public void Add(T entity)
@@ -29,19 +31,41 @@ namespace FineLines.DataAccess.Repositories
             throw new NotImplementedException();
         }
 
-        public IEnumerable<T> GetAll()
+        //includeProp -> "Category,CoverType"
+        public IEnumerable<T> GetAll(string? includeProperties)
         {
+
             //First we need to query the db
             IQueryable<T> query = dbSet;
+            if (includeProperties != null)
+            {
+                //first split "includeProperties" by ','
+                foreach(var property in includeProperties.Split(new char[] {','}, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    //include all the propery results to the query
+                    query = query.Include(property);
+
+                }
+            }
             //then return it as a list
             return query.ToList();
 
         }
 
-        public T GetFirstOrDefault(Expression<Func<T, bool>> filter)
+        public T GetFirstOrDefault(Expression<Func<T, bool>> filter, string? includeProperties)
         {
             //First we need to query the db
             IQueryable<T> query = dbSet;
+            if (includeProperties != null)
+            {
+                //first split "includeProperties" by ','
+                foreach (var property in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    //include all the propery results to the query
+                    query = query.Include(property);
+
+                }
+            }
             query = query.Where(filter);
 
             //then return it as a list
