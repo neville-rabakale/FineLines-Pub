@@ -10,12 +10,11 @@ namespace FineLines.DataAccess.Repositories.IRepositories
     //Generic Repository Interface
     public interface IRepository <T> where T : class
     {
-        T GetFirstOrDefault(Expression<Func< T, bool>> filter, string? includeProperties);
-
+        T GetFirstOrDefault(Expression<Func< T, bool>> filter, string? includeProperties = null);
         //get method
         T Get(int id);
         //get all
-        IEnumerable <T> GetAll(string? includeProperties);
+        IEnumerable <T> GetAll(string? includeProperties = null);
         void Add(T entity);
         void Remove(T entity);
 //        void Remove(int entity);

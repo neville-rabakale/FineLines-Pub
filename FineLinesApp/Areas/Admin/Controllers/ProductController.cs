@@ -33,13 +33,13 @@ namespace FineLinesApp.Controllers
             {
                 product = new(),
                 //For the Dropdowns for Category and CoverType
-                CategoryList = _unitOfWork.Category.GetAll().Select(
+                CategoryList = _unitOfWork.Category.GetAll(includeProperties: "Category,CoverType").Select(
                     u => new SelectListItem
                     {
                         Text = u.Name,
                         Value = u.Id.ToString()
                     }),
-                CoverTypeList = _unitOfWork.CoverType.GetAll().Select(
+                CoverTypeList = _unitOfWork.CoverType.GetAll(includeProperties: "Category,CoverType").Select(
                     u => new SelectListItem
                     {
                         Text = u.Name,
@@ -55,7 +55,7 @@ namespace FineLinesApp.Controllers
             //Update Product
             else
             {
-                var productFromDb = _unitOfWork.Product.GetFirstOrDefault(u => u.Id == id);
+                var productFromDb = _unitOfWork.Product.GetFirstOrDefault(u => u.Id == id, includeProperties: "Category,CoverType");
                 if(productFromDb == null)
                 {
                     return NotFound();
@@ -118,7 +118,7 @@ namespace FineLinesApp.Controllers
                 return NotFound();
             }
 
-            var categoryFromDb = _unitOfWork.Product.GetFirstOrDefault(u => u.Id == id);
+            var categoryFromDb = _unitOfWork.Product.GetFirstOrDefault(u => u.Id == id, includeProperties: "Category,CoverType");
             //check if item from Db has valid Id
             if (id == null)
             {
@@ -134,7 +134,7 @@ namespace FineLinesApp.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeletePost(int?id)
         {
-            var obj = _unitOfWork.Product.GetFirstOrDefault(u => u.Id == id);
+            var obj = _unitOfWork.Product.GetFirstOrDefault(u => u.Id == id, includeProperties: "Category,CoverType");
             //check if item from Db has valid Id
             if (obj == null)
             {
@@ -157,7 +157,7 @@ namespace FineLinesApp.Controllers
         //ret json because it is for the "datatables.net datatable
         public IActionResult GetAll()
         {
-            var productList = _unitOfWork.Product.GetAll();
+            var productList = _unitOfWork.Product.GetAll(includeProperties: "Category,CoverType");
             return Json(new { data = productList });
         }
         #endregion
