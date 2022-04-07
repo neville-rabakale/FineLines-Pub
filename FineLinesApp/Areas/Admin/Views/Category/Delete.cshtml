@@ -11,11 +11,11 @@
 @*        <div asp-validation-summary="All"></div>
 *@        <div class="mb-3">
             <label asp-for="Name"></label>
-            <input asp-for="Name" class="form-control" id="disabledInput" />
+            <input asp-for="Name" class="form-control" id="disabledInput" readonly/>
         </div>
         <div class="mb-3">
             <label asp-for="DisplayOrder"></label>
-            <input id="disabledInput" asp-for="DisplayOrder" class="form-control" />
+            <input id="disabledInput" asp-for="DisplayOrder" class="form-control" readonly/>
         </div>
         <button type="submit" class="btn btn-danger" style="width:150px">Delete</button>
         <a asp-controller="Category" asp-action="Index" class = "btn btn-secondary" style="width:150px">Back to List</a>
