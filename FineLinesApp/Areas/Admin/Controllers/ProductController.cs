@@ -55,13 +55,15 @@ namespace FineLinesApp.Controllers
             //Update Product
             else
             {
-                var productFromDb = _unitOfWork.Product.GetFirstOrDefault(u => u.Id == id);
-                if(productFromDb == null)
+                productVM.product = _unitOfWork.Product.GetFirstOrDefault(u => u.Id == id);
+                if(productVM.product == null)
                 {
                     return NotFound();
                 }
-                return View(productFromDb);
+                return View(productVM);
             }
+            //return View(productVM);
+
 
         }
 
