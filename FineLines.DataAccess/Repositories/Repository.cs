@@ -32,7 +32,7 @@ namespace FineLines.DataAccess.Repositories
         }
 
         //includeProp -> "Category,CoverType"
-        public IEnumerable<T> GetAll(string? includeProperties)
+        public IEnumerable<T> GetAll(string? includeProperties = null)
         {
 
             //First we need to query the db
@@ -52,10 +52,11 @@ namespace FineLines.DataAccess.Repositories
 
         }
 
-        public T GetFirstOrDefault(Expression<Func<T, bool>> filter, string? includeProperties)
+        public T GetFirstOrDefault(Expression<Func<T, bool>> filter, string? includeProperties = null)
         {
             //First we need to query the db
             IQueryable<T> query = dbSet;
+            query = query.Where(filter);
             if (includeProperties != null)
             {
                 //first split "includeProperties" by ','
@@ -66,7 +67,6 @@ namespace FineLines.DataAccess.Repositories
 
                 }
             }
-            query = query.Where(filter);
 
             //then return it as a list
             return query.FirstOrDefault();

@@ -33,13 +33,13 @@ namespace FineLinesApp.Controllers
             {
                 product = new(),
                 //For the Dropdowns for Category and CoverType
-                CategoryList = _unitOfWork.Category.GetAll(includeProperties: "Category,CoverType").Select(
+                CategoryList = _unitOfWork.Category.GetAll().Select(
                     u => new SelectListItem
                     {
                         Text = u.Name,
                         Value = u.Id.ToString()
                     }),
-                CoverTypeList = _unitOfWork.CoverType.GetAll(includeProperties: "Category,CoverType").Select(
+                CoverTypeList = _unitOfWork.CoverType.GetAll().Select(
                     u => new SelectListItem
                     {
                         Text = u.Name,
@@ -55,7 +55,7 @@ namespace FineLinesApp.Controllers
             //Update Product
             else
             {
-                var productFromDb = _unitOfWork.Product.GetFirstOrDefault(u => u.Id == id, includeProperties: "Category,CoverType");
+                var productFromDb = _unitOfWork.Product.GetFirstOrDefault(u => u.Id == id);
                 if(productFromDb == null)
                 {
                     return NotFound();
@@ -118,7 +118,7 @@ namespace FineLinesApp.Controllers
                 return NotFound();
             }
 
-            var categoryFromDb = _unitOfWork.Product.GetFirstOrDefault(u => u.Id == id, includeProperties: "Category,CoverType");
+            var categoryFromDb = _unitOfWork.Product.GetFirstOrDefault(u => u.Id == id);
             //check if item from Db has valid Id
             if (id == null)
             {
@@ -134,7 +134,7 @@ namespace FineLinesApp.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeletePost(int?id)
         {
-            var obj = _unitOfWork.Product.GetFirstOrDefault(u => u.Id == id, includeProperties: "Category,CoverType");
+            var obj = _unitOfWork.Product.GetFirstOrDefault(u => u.Id == id);
             //check if item from Db has valid Id
             if (obj == null)
             {
