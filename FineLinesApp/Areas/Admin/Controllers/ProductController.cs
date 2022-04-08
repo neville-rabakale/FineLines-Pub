@@ -88,6 +88,19 @@ namespace FineLinesApp.Controllers
                     var uploads = Path.Combine(wwwRootPath, @"images\products");
                     //Getting the fileName of the file
                     var extension = Path.GetExtension(file.FileName);
+                    if(obj.product.ImageUrl != null)
+                    {
+                        //get path for existing image + remove \ as used in db --> see diff between uploads & bj.product.ImageUrl
+                        var oldImageUrl = Path.Combine(wwwRootPath, obj.product.ImageUrl.TrimStart('\\'));
+                        //Check if old image exists at this old path
+                        if (System.IO.File.Exists(oldImageUrl))
+                        {
+                            //If it exists  we should delete
+                            System.IO.File.Delete(oldImageUrl);
+
+                        }
+                    }
+
                     //copy uploaded file into the Product folder
                     using (var fileStreams = new FileStream(Path.Combine(uploads, fileName + extension), FileMode.Create)) 
                     {
@@ -98,8 +111,17 @@ namespace FineLinesApp.Controllers
 
                 }
 
+                //Check if we are adding new product or updating
+                if(obj.product.Id == 0)
+                {
+                    _unitOfWork.Product.Add(obj.product);
+                }
+                else
+                {
+                    _unitOfWork.Product.Update(obj.product);
 
-                _unitOfWork.Product.Add(obj.product);
+                }
+
                 _unitOfWork.Save();
                 TempData["success"] = "Product Created successfully";
 
@@ -130,7 +152,7 @@ namespace FineLinesApp.Controllers
             return View(categoryFromDb);
         }
 
-        //DELETE --Remocing items to Categories
+        //DELETE --Removing items From Products
         //You can explicitly give action name by using actionName("String")
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
