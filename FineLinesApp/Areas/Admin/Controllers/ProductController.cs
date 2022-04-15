@@ -136,6 +136,7 @@ namespace FineLinesApp.Controllers
         //GET
         public IActionResult Delete(int? id)
         {
+
             //check for invalid id
             if (id == null || id == 0)
             {
@@ -158,11 +159,31 @@ namespace FineLinesApp.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult DeletePost(int?id)
         {
+            //to get path for img, we need to use rootpath here too
+            string wwwRootPath = _hostEnvironment.WebRootPath;
+            //get product from db
             var obj = _unitOfWork.Product.GetFirstOrDefault(u => u.Id == id);
-            //check if item from Db has valid Id
+            //check if item from Db has valid Id/exists
             if (obj == null)
             {
                 return NotFound();
+            }
+
+            //Here we need to first check if an image exists
+            //if it does, we need to delete it
+            if (obj.ImageUrl != null)
+            {
+                //image exests
+                //get path for existing image + remove \ as used in db --> see diff between uploads & bj.product.ImageUrl
+                var oldImageUrl = Path.Combine(wwwRootPath, obj.ImageUrl.TrimStart('\\'));
+                //Check if old image exists at this old path
+                if (System.IO.File.Exists(oldImageUrl))
+                {
+                    //If it exists  we should delete
+                    System.IO.File.Delete(oldImageUrl);
+
+                }
+
             }
 
             _unitOfWork.Product.Remove(obj);
