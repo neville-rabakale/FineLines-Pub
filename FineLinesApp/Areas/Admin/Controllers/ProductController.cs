@@ -133,68 +133,6 @@ namespace FineLinesApp.Controllers
             return View(obj);
         }
 
-        //GET
-        public IActionResult Delete(int? id)
-        {
-
-            //check for invalid id
-            if (id == null || id == 0)
-            {
-                return NotFound();
-            }
-
-            var categoryFromDb = _unitOfWork.Product.GetFirstOrDefault(u => u.Id == id);
-            //check if item from Db has valid Id
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            return View(categoryFromDb);
-        }
-
-        //DELETE --Removing items From Products
-        //You can explicitly give action name by using actionName("String")
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public IActionResult DeletePost(int?id)
-        {
-            //to get path for img, we need to use rootpath here too
-            string wwwRootPath = _hostEnvironment.WebRootPath;
-            //get product from db
-            var obj = _unitOfWork.Product.GetFirstOrDefault(u => u.Id == id);
-            //check if item from Db has valid Id/exists
-            if (obj == null)
-            {
-                return NotFound();
-            }
-
-            //Here we need to first check if an image exists
-            //if it does, we need to delete it
-            if (obj.ImageUrl != null)
-            {
-                //image exests
-                //get path for existing image + remove \ as used in db --> see diff between uploads & bj.product.ImageUrl
-                var oldImageUrl = Path.Combine(wwwRootPath, obj.ImageUrl.TrimStart('\\'));
-                //Check if old image exists at this old path
-                if (System.IO.File.Exists(oldImageUrl))
-                {
-                    //If it exists  we should delete
-                    System.IO.File.Delete(oldImageUrl);
-
-                }
-
-            }
-
-            _unitOfWork.Product.Remove(obj);
-            _unitOfWork.Save();
-            TempData["success"] = "Product deleted successfully";
-            //this takes you back to the index.
-            //-- If you want to redirect to action in another controller,
-            //you can just add controller name as second variable
-            return RedirectToAction("Index");
-
-        }
 
         #region API CALLS
         [HttpGet]
@@ -205,6 +143,37 @@ namespace FineLinesApp.Controllers
             var productList = _unitOfWork.Product.GetAll(includeProperties: "Category,CoverType");
             return Json(new { data = productList });
         }
+
+        //DELETE --Removing items From Products
+        [HttpDelete]
+        public IActionResult Delete(int? id)
+        {
+            string wwwRootPath = _hostEnvironment.WebRootPath;
+            var obj = _unitOfWork.Product.GetFirstOrDefault(u => u.Id == id);
+            if (obj == null)
+            {
+                return Json(new { data = obj, message = "Error while Deleting" });
+            }
+
+            if (obj.ImageUrl != null)
+            {
+                var oldImageUrl = Path.Combine(wwwRootPath, obj.ImageUrl.TrimStart('\\'));
+                //Check if old image exists at this old path
+                if (System.IO.File.Exists(oldImageUrl))
+                {
+                    //If it exists  we should delete
+                    System.IO.File.Delete(oldImageUrl);
+                }
+
+            }
+
+            _unitOfWork.Product.Remove(obj);
+            _unitOfWork.Save();
+            return Json(new { success = true, message = "Deleted successfully" });
+            //   return RedirectToAction("Index");
+
+        }
+
         #endregion
     }
 

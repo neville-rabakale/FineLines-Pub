@@ -38,14 +38,6 @@
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Update="Areas\Admin\Views\Product\Create.cshtml">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-    <Content Update="Areas\Admin\Views\Product\Delete.cshtml">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
     <Content Update="Areas\Admin\Views\Product\Upsert.cshtml">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
