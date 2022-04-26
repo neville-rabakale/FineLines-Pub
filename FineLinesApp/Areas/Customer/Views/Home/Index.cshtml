@@ -18,9 +18,9 @@
                     <img class="card-img-top rounded"  src="@products.ImageUrl" alt="Card image cap">
                     <div class="card-body">
                         <h5 class="card-title">@products.Title</h5>
-                        <p class="card-text">Author: @products.Author</p>
-                        <p class="card-text">Price: @products.Price</p>
-                        <a href="#" class="btn btn-primary">Details</a>
+                        <p class="card-text text-info">By Author: @products.Author</p>
+                        <p class="card-text"><b>Price: @products.Price.ToString("0.00") SEK</b></p>
+                        <a asp-action="details" class="btn btn-primary form-control" asp-route-id="@products.Id">Details</a>
                     </div>
                 </div>
             </div>
