@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FineLines.DataAccess\FineLines.DataAccess.csproj" />
+    <ProjectReference Include="..\FineLines.Utility\FineLines.Utility.csproj" />
   </ItemGroup>
 
   <ItemGroup>
