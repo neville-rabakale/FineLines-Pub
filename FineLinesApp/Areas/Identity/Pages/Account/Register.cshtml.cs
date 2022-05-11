@@ -147,6 +147,7 @@ namespace FineLinesApp.Areas.Identity.Pages.Account
 
             Input = new InputModel()
             {
+                //Select Projections
                 RoleList = _roleManager.Roles.Select(x => x.Name).Select(i => new SelectListItem
                 {
                     Text = i,
