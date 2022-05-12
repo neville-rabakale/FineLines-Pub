@@ -55,7 +55,7 @@ namespace FineLinesApp.Controllers
                 u => u.ApplicationUserId == claim.Value &&
                 u.ProductId == shoppingCart.ProductId);
             
-            // if obj from db meeting the conditions doesnt exist == item is new
+            // if obj from db that meets the conditions doesnt exist => item is new
             if(cartFromDb == null)
             {
                 _unitOfWork.ShoppingCart.Add(shoppingCart);
