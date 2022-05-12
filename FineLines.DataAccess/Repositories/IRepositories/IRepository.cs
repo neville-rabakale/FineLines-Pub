@@ -14,7 +14,7 @@ namespace FineLines.DataAccess.Repositories.IRepositories
         //get method
         T Get(int id);
         //get all
-        IEnumerable <T> GetAll(string? includeProperties = null);
+        IEnumerable <T> GetAll(Expression<Func<T, bool>>? filter=null, string? includeProperties = null);
         void Add(T entity);
         void Remove(T entity);
 //        void Remove(int entity);

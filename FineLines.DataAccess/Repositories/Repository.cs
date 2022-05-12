@@ -32,11 +32,15 @@ namespace FineLines.DataAccess.Repositories
         }
 
         //includeProp -> "Category,CoverType"
-        public IEnumerable<T> GetAll(string? includeProperties = null)
+        public IEnumerable<T> GetAll(Expression<Func<T, bool>>? filter = null, string? includeProperties = null)
         {
 
             //First we need to query the db
             IQueryable<T> query = dbSet;
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
             if (includeProperties != null)
             {
                 //first split "includeProperties" by ','
