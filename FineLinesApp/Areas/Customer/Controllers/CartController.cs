@@ -73,21 +73,6 @@ namespace FineLinesApp.Areas.Customer.Controllers
             return RedirectToAction(nameof(Index));
 
         }
-
-        public ActionResult Summary()
-        {
-
-            var claimsIdentity = (ClaimsIdentity)User.Identity;
-            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
-
-            ShoppingCartVM = new ShoppingCartVM();
-            ShoppingCartVM.ListCart = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == claim.Value,
-                includeProperties: "Product");
-
-
-            return View(ShoppingCartVM);
-        }
-
         public IActionResult Remove(int cartId)
         {
 
@@ -103,6 +88,21 @@ namespace FineLinesApp.Areas.Customer.Controllers
             return RedirectToAction(nameof(Index));
 
         }
+
+        public ActionResult Summary()
+        {
+
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+
+            ShoppingCartVM = new ShoppingCartVM();
+            ShoppingCartVM.ListCart = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == claim.Value,
+                includeProperties: "Product");
+
+
+            return View(ShoppingCartVM);
+        }
+
 
         private double GetPriceBasedOnQuantity(double quantity, double price, double price50, double price100)
         {
