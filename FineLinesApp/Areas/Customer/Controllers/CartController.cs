@@ -1,4 +1,5 @@
 ﻿using FineLines.DataAccess.Repositories.IRepositories;
+using FineLines.Models;
 using FineLines.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -16,7 +17,6 @@ namespace FineLinesApp.Areas.Customer.Controllers
         {
             _unitOfWork = unitOfWork;
         }
-        public int OrderTotal { get; set; }
         public ShoppingCartVM ShoppingCartVM  { get; set; }
 
         // GET: CartController
@@ -34,10 +34,74 @@ namespace FineLinesApp.Areas.Customer.Controllers
             {
                 cart.Price = GetPriceBasedOnQuantity(cart.Count, cart.Product.Price,
                     cart.Product.Price50, cart.Product.Price100);
-                
+                ShoppingCartVM.CartTotal += (cart.Count * cart.Price); 
             }
 
             return View(ShoppingCartVM);
+        }
+
+        public IActionResult Plus( int cartId)
+        {
+
+            var cart = _unitOfWork.ShoppingCart.GetFirstOrDefault(u => u.Id == cartId);
+ //           _unitOfWork.ShoppingCart.IncrementCount(cart, 1)
+            if (cart == null)
+            {
+                return NotFound();
+            }
+            cart.Count += 1;
+            _unitOfWork.Save();
+
+            return RedirectToAction(nameof(Index));
+
+        }
+        public IActionResult Minus(int cartId)
+        {
+
+            var cart = _unitOfWork.ShoppingCart.GetFirstOrDefault(u => u.Id == cartId);
+
+            if (cart.Count <= 1)
+            {
+                _unitOfWork.ShoppingCart.Remove(cart);
+            }
+            else
+            {
+                cart.Count -= 1;
+            }     
+            _unitOfWork.Save();
+
+            return RedirectToAction(nameof(Index));
+
+        }
+
+        public ActionResult Summary()
+        {
+
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+
+            ShoppingCartVM = new ShoppingCartVM();
+            ShoppingCartVM.ListCart = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == claim.Value,
+                includeProperties: "Product");
+
+
+            return View(ShoppingCartVM);
+        }
+
+        public IActionResult Remove(int cartId)
+        {
+
+            var cart = _unitOfWork.ShoppingCart.GetFirstOrDefault(u => u.Id == cartId);
+
+            if (cart == null)
+            {
+                return NotFound();
+            }
+            _unitOfWork.ShoppingCart.Remove(cart);
+            _unitOfWork.Save();
+
+            return RedirectToAction(nameof(Index));
+
         }
 
         private double GetPriceBasedOnQuantity(double quantity, double price, double price50, double price100)
