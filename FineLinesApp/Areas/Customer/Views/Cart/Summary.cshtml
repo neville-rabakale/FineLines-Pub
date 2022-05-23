@@ -1,4 +1,5 @@
-﻿
+﻿@model FineLines.Models.ViewModels.ShoppingCartVM
+
 
 <form method="post">
 	<br />
@@ -11,7 +12,7 @@
 						Order Summary
 					</div>
 					<div class="col-6 text-end">
-						<a class="btn btn-outline-info btn-sm">Back to Cart</a>
+						<a class="btn btn-outline-info btn-sm" asp-action="Index" >Back to Cart</a>
 					</div>
 				</div>
 			</div>
@@ -26,10 +27,10 @@
 							</div>
 							<div class="row my-1">
 								<div class="col-3">
-									<label>Name</label>
+									<label> Name</label>
 								</div>
 								<div class="col-9">
-									<input class="form-control" />
+									<input class="form-control" asp-for="OrderHeader.Name"/>
 								</div>
 							</div>
 							<div class="row my-1">
@@ -37,7 +38,7 @@
 									<label>Phone</label>
 								</div>
 								<div class="col-9">
-									<input class="form-control" />
+									<input class="form-control" asp-for="OrderHeader.PhoneNumber" />
 								</div>
 							</div>
 							<div class="row my-1">
@@ -45,7 +46,7 @@
 									<label>Street Address</label>
 								</div>
 								<div class="col-9">
-									<input class="form-control" />
+									<input class="form-control" asp-for="OrderHeader.StreetAddress" />
 								</div>
 							</div>
 							<div class="row my-1">
@@ -53,15 +54,15 @@
 									<label>City</label>
 								</div>
 								<div class="col-9">
-									<input class="form-control" />
+									<input class="form-control" asp-for="OrderHeader.City" />
 								</div>
 							</div>
 							<div class="row my-1">
 								<div class="col-3">
-									<label>State</label>
+									<label>County</label>
 								</div>
 								<div class="col-9">
-									<input class="form-control" />
+									<input class="form-control" asp-for="OrderHeader.County" />
 								</div>
 							</div>
 							<div class="row my-1">
@@ -69,7 +70,7 @@
 									<label>Postal Code</label>
 								</div>
 								<div class="col-9">
-									<input class="form-control" />
+									<input class="form-control" asp-for="OrderHeader.PostalCode" />
 								</div>
 							</div>
 						</div>
@@ -78,18 +79,18 @@
 								<span class="text-info">Order Summary:</span>
 							</h4>
 							<ul class="list-group mb-3">
-
-								<li class="list-group-item d-flex justify-content-between">
-									<div>
-										<h6 class="my-0">Title</h6>
-										<small class="text-muted">Quantity: Count</small>
-									</div>
-									<span class="text-muted">$$$ </span>
-								</li>
-
+								@foreach(var item in @Model.ListCart){
+									<li class="list-group-item d-flex justify-content-between">
+										<div>
+											<h6 class="my-0">@item.Product.Title</h6>
+											<small class="text-muted">Quantity: @item.Count</small>
+										</div>
+										<span class="text-muted">@Model.OrderHeader.OrderTotal SEK </span>
+									</li>
+								}
 								<li class="list-group-item d-flex justify-content-between bg-light">
-									<small class="text-info">Total (USD)</small>
-									<strong class="text-info">$$$</strong>
+									<small class="text-info">@Model.OrderHeader.OrderTotal.ToString("c")</small>
+									<strong class="text-info">SEK</strong>
 								</li>
 							</ul>
 						</div>
@@ -99,7 +100,8 @@
 			<div class="card-footer">
 				<div class="row">
 					<div class="col-12 col-md-8 pt-2">
-						<p style="color:maroon; font-size:14px;">Estimate Arrival Date: </p>
+						<p style="color:maroon; font-size:14px;">Estimate Arrival Date:
+							@DateTime.Now.AddDays(7).ToShortDateString() - @DateTime.Now.AddDays(14).ToShortDateString() </p>
 					</div>
 					<div class="col-12 col-md-4">
 						<button type="submit" value="Place Order" class="btn btn-primary form-control">Place Order</button>

@@ -29,12 +29,13 @@ namespace FineLinesApp.Areas.Customer.Controllers
             ShoppingCartVM = new ShoppingCartVM();
             ShoppingCartVM.ListCart = _unitOfWork.ShoppingCart.GetAll(u=>u.ApplicationUserId == claim.Value,
                 includeProperties: "Product");
+            ShoppingCartVM.OrderHeader = new();
 
             foreach (var cart in ShoppingCartVM.ListCart)
             {
                 cart.Price = GetPriceBasedOnQuantity(cart.Count, cart.Product.Price,
                     cart.Product.Price50, cart.Product.Price100);
-                ShoppingCartVM.CartTotal += (cart.Count * cart.Price); 
+                ShoppingCartVM.OrderHeader.OrderTotal += (cart.Count * cart.Price); 
             }
 
             return View(ShoppingCartVM);
@@ -98,7 +99,26 @@ namespace FineLinesApp.Areas.Customer.Controllers
             ShoppingCartVM = new ShoppingCartVM();
             ShoppingCartVM.ListCart = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == claim.Value,
                 includeProperties: "Product");
+            ShoppingCartVM.OrderHeader = new();
+            //retrieve application user details for the logged in user
+            ShoppingCartVM.OrderHeader.ApplicationUser = _unitOfWork.ApplicationUser.GetFirstOrDefault(
+                u => u.Id == claim.Value);
+            //Poulate all fields in order header based on Application user details in db
+            ShoppingCartVM.OrderHeader.Name = ShoppingCartVM.OrderHeader.ApplicationUser.Name;
+            ShoppingCartVM.OrderHeader.PhoneNumber = ShoppingCartVM.OrderHeader.ApplicationUser.PhoneNumber;
+            ShoppingCartVM.OrderHeader.StreetAddress = ShoppingCartVM.OrderHeader.ApplicationUser.StreetAddress;
+            ShoppingCartVM.OrderHeader.City = ShoppingCartVM.OrderHeader.ApplicationUser.City;
+            ShoppingCartVM.OrderHeader.County = ShoppingCartVM.OrderHeader.ApplicationUser.County;
+            ShoppingCartVM.OrderHeader.PostalCode = ShoppingCartVM.OrderHeader.ApplicationUser.PostalCode;
 
+            //Get cart total -- Itarate through the list to get the values
+            foreach (var cart in ShoppingCartVM.ListCart)
+            {
+                cart.Price = GetPriceBasedOnQuantity(cart.Count, cart.Product.Price,
+                    cart.Product.Price50, cart.Product.Price100);
+                ShoppingCartVM.OrderHeader.OrderTotal += (cart.Price * cart.Count);
+            }
+            _unitOfWork.Save();
 
             return View(ShoppingCartVM);
         }

@@ -39,7 +39,7 @@ namespace FineLines.Models
         [Required]
         public string City { get; set; }
         [Required]
-        public string State { get; set; }
+        public string County { get; set; }
         [Required]
         public string PostalCode { get; set; }
         [Required]
