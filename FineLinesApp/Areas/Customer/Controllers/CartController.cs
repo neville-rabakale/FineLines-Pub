@@ -5,6 +5,7 @@ using FineLines.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Stripe.Checkout;
 using System.Security.Claims;
 
 namespace FineLinesApp.Areas.Customer.Controllers
@@ -18,6 +19,7 @@ namespace FineLinesApp.Areas.Customer.Controllers
         {
             _unitOfWork = unitOfWork;
         }
+        [BindProperty]
         public ShoppingCartVM ShoppingCartVM  { get; set; }
 
         // GET: CartController
@@ -129,7 +131,7 @@ namespace FineLinesApp.Areas.Customer.Controllers
         [HttpPost]
         [ActionName("Summary")]
         [ValidateAntiForgeryToken]
-        public ActionResult SummaryPost(ShoppingCartVM ShoppingCartVM)
+        public ActionResult SummaryPost()
         {
 
             var claimsIdentity = (ClaimsIdentity)User.Identity;
@@ -167,11 +169,67 @@ namespace FineLinesApp.Areas.Customer.Controllers
                 _unitOfWork.Save();
 
             }
-            _unitOfWork.ShoppingCart.RemoveRange(ShoppingCartVM.ListCart);
+            //Stripe Configuration
+
+            var domain = "https://localhost:44383/";
+            var options = new SessionCreateOptions
+            {
+                PaymentMethodTypes = new List<string>
+                {
+                    "card",
+                },
+                LineItems = new List<SessionLineItemOptions>(),
+                Mode = "payment",
+                SuccessUrl = domain+$"customer/cart/OrderConfirmation?id={ShoppingCartVM.OrderHeader.Id}", //redirect if success
+                CancelUrl = domain+$"customer/cart/index", //redirect if cancel
+            };
+
+            foreach( var item in ShoppingCartVM.ListCart)
+            {
+                var sessionLineItem = new SessionLineItemOptions
+                {
+                    PriceData = new SessionLineItemPriceDataOptions
+                    {
+                        UnitAmount = (long)(item.Price * 100), //10.00 = 1000
+                        Currency = "sek",
+                        ProductData = new SessionLineItemPriceDataProductDataOptions
+                        {
+                            Name = item.Product.Title,
+                        },
+
+                    },
+                    Quantity = item.Count,
+                };
+            options.LineItems.Add(sessionLineItem);
+            }
+            
+            var service = new SessionService();
+            Session session = service.Create(options);
+
+            _unitOfWork.OrderHeader.UpdateStripePaymentID(ShoppingCartVM.OrderHeader.Id, session.Id, session.PaymentIntentId);
             _unitOfWork.Save();
 
+            Response.Headers.Add("Location", session.Url);
+            return new StatusCodeResult(303);
 
-            return RedirectToAction("Index", "Home");
+
+        }
+
+        public IActionResult OrderConfirmation(int id)
+        {
+            OrderHeader orderHeader = _unitOfWork.OrderHeader.GetFirstOrDefault(u => u.Id == id);
+            var service = new SessionService();
+            Session session = service.Get(orderHeader.SessionId);
+            //Check Stripe Status
+            if (session.PaymentStatus.ToLower() == "paid")
+            {
+                _unitOfWork.OrderHeader.UpdateStatus(id, SD.StatusApproved, SD.PaymentStatusApproved);
+                _unitOfWork.Save();
+            }
+            List<ShoppingCart> shoppingCarts = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == orderHeader.ApplicationUserId).ToList();
+            _unitOfWork.ShoppingCart.RemoveRange(shoppingCarts);
+            _unitOfWork.Save();
+            return View(id);
         }
 
         private double GetPriceBasedOnQuantity(double quantity, double price, double price50, double price100)

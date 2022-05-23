@@ -1,5 +1,6 @@
 ﻿@model FineLines.Models.ViewModels.ShoppingCartVM
-
+@using Microsoft.Extensions.Options
+@inject IOptions<FineLines.Utility.StripeSettings> Stripe
 
 <form method="post">
 	<br />
