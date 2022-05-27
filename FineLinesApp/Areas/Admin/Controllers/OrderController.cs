@@ -1,6 +1,7 @@
 ﻿using FineLines.DataAccess.Repositories;
 using FineLines.DataAccess.Repositories.IRepositories;
 using FineLines.Models;
+using FineLines.Models.ViewModels;
 using FineLines.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,6 +15,8 @@ namespace FineLinesApp.Areas.Admin.Controllers
     public class OrderController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+        [BindProperty]
+        public OrderVM OrderVM { get; set; }
 
         public OrderController(IUnitOfWork unitOfWork)
         {
@@ -22,6 +25,17 @@ namespace FineLinesApp.Areas.Admin.Controllers
         public IActionResult Index()
         {
             return View();
+        }
+
+        public IActionResult Details( int orderid)
+        {
+            OrderVM orderVM = new OrderVM()
+            {
+                OrderHeader = _unitOfWork.OrderHeader.GetFirstOrDefault(u=>u.Id == orderid, includeProperties: "ApplicationUser"),
+                OrderDetail = _unitOfWork.OrderDetail.GetAll(u=>u.OrderId == orderid  ,includeProperties: "Product")
+            };
+            
+            return View(orderVM);
         }
 
         #region API CALLS
