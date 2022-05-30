@@ -40,6 +40,7 @@ namespace FineLinesApp.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
         public IActionResult UpdateOrderDetail()
         {
             //We want to update the OrderHeader values in db with the values in the Current orderHeader values in the VM
@@ -66,6 +67,37 @@ namespace FineLinesApp.Areas.Admin.Controllers
             TempData["Success"] = "Order Details Updated Successfully";
             return RedirectToAction("Details", "Order", new {orderId = orderHeaderfromDb.Id});
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
+        public IActionResult UpdateToProcessing()
+        {
+            //Change order status to processing
+            _unitOfWork.OrderHeader.UpdateStatus(OrderVM.OrderHeader.Id, SD.StatusInProcess);
+            _unitOfWork.Save();
+            TempData["Success"] = "Order Staus Updated Successfully";
+            return RedirectToAction("Details", "Order", new { orderId= OrderVM.OrderHeader.Id});
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
+        public IActionResult ShipOrder()
+        {
+            //We want to update the OrderHeader values in db with the values in the Current orderHeader values in the VM
+            var orderHeader = _unitOfWork.OrderHeader.GetFirstOrDefault(u => u.Id == OrderVM.OrderHeader.Id);
+            orderHeader.OrderStatus = SD.StatusShipped;
+            orderHeader.Carrier = OrderVM.OrderHeader.Carrier;
+            orderHeader.TrackingNumber = OrderVM.OrderHeader.TrackingNumber;
+            orderHeader.ShippingDate = DateTime.Now;
+
+            //update and save
+            _unitOfWork.OrderHeader.Update(orderHeader);
+            _unitOfWork.Save();
+            TempData["Success"] = "Order Staus Updated Successfully";
+            return RedirectToAction("Details", "Order", new { orderId = orderHeader.Id });
+        }
+
         #region API CALLS
         [HttpGet]
         //call to retrieve datatable/all items in database-
