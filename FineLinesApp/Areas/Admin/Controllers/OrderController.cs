@@ -27,17 +27,45 @@ namespace FineLinesApp.Areas.Admin.Controllers
             return View();
         }
 
-        public IActionResult Details( int orderid)
+        public IActionResult Details( int orderId)
         {
             OrderVM orderVM = new OrderVM()
             {
-                OrderHeader = _unitOfWork.OrderHeader.GetFirstOrDefault(u=>u.Id == orderid, includeProperties: "ApplicationUser"),
-                OrderDetail = _unitOfWork.OrderDetail.GetAll(u=>u.OrderId == orderid  ,includeProperties: "Product")
+                OrderHeader = _unitOfWork.OrderHeader.GetFirstOrDefault(u=>u.Id == orderId, includeProperties: "ApplicationUser"),
+                OrderDetail = _unitOfWork.OrderDetail.GetAll(u=>u.OrderId == orderId  ,includeProperties: "Product")
             };
             
             return View(orderVM);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult UpdateOrderDetail()
+        {
+            //We want to update the OrderHeader values in db with the values in the Current orderHeader values in the VM
+            var orderHeaderfromDb = _unitOfWork.OrderHeader.GetFirstOrDefault(u => u.Id == OrderVM.OrderHeader.Id);
+            orderHeaderfromDb.Name = OrderVM.OrderHeader.Name;
+            orderHeaderfromDb.PhoneNumber = OrderVM.OrderHeader.PhoneNumber;
+            orderHeaderfromDb.StreetAddress = OrderVM.OrderHeader.StreetAddress;
+            orderHeaderfromDb.City = OrderVM.OrderHeader.City;
+            orderHeaderfromDb.County = OrderVM.OrderHeader.County;
+            orderHeaderfromDb.PostalCode = OrderVM.OrderHeader.PostalCode;
+            //allow change of carrier
+            if(OrderVM.OrderHeader.Carrier != null)
+            {
+                orderHeaderfromDb.Carrier = OrderVM.OrderHeader.Carrier;
+            }
+            //allow change of Tracking Number
+            if (OrderVM.OrderHeader.TrackingNumber != null)
+            {
+                orderHeaderfromDb.TrackingNumber = OrderVM.OrderHeader.TrackingNumber;
+            }
+            //update and save
+            _unitOfWork.OrderHeader.Update(orderHeaderfromDb);
+            _unitOfWork.Save();
+            TempData["Success"] = "Order Details Updated Successfully";
+            return RedirectToAction("Details", "Order", new {orderId = orderHeaderfromDb.Id});
+        }
         #region API CALLS
         [HttpGet]
         //call to retrieve datatable/all items in database-

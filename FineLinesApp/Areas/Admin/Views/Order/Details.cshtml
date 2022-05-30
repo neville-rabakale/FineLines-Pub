@@ -2,6 +2,7 @@
 @using FineLines.Utility
 
 <form method="post">
+    <input asp-for="OrderHeader.Id" hidden />
     <br />
     <div class="container">
         <div class="card">
@@ -208,7 +209,7 @@
                                     }
                                 </div>
                             </div>
-                            <input type="submit" class="btn btn-warning form-control my-1" value="Update Order Details" />
+                            <input type="submit" asp-action="UpdateOrderDetail" class="btn btn-warning form-control my-1" value="Update Order Details" />
 
 
                         </div>
