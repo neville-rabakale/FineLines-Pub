@@ -2,12 +2,15 @@
 using FineLines.DataAccess.Repositories.IRepositories;
 using FineLines.Models;
 using FineLines.Models.ViewModels;
+using FineLines.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace FineLinesApp.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = SD.Role_Admin)]
     public class ProductController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

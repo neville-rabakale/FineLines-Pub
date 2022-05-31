@@ -1,11 +1,14 @@
 ﻿using FineLines.DataAccess.Repositories.IRepositories;
 using FineLines.Models;
+using FineLines.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FineLinesApp.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = SD.Role_Admin)]
     public class CompanyController : Controller
     {
         readonly IUnitOfWork _unitOfWork;

@@ -1,11 +1,14 @@
 ﻿using FineLines.DataAccess;
 using FineLines.DataAccess.Repositories.IRepositories;
 using FineLines.Models;
+using FineLines.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FineLinesApp.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = SD.Role_Admin )]
     public class CategoryController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

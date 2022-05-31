@@ -5,6 +5,7 @@ using FineLines.Models.ViewModels;
 using FineLines.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Stripe;
 using System.Collections;
 using System.Security.Claims;
 
@@ -95,6 +96,41 @@ namespace FineLinesApp.Areas.Admin.Controllers
             _unitOfWork.OrderHeader.Update(orderHeader);
             _unitOfWork.Save();
             TempData["Success"] = "Order Staus Updated Successfully";
+            return RedirectToAction("Details", "Order", new { orderId = orderHeader.Id });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
+        public IActionResult CancellOrder()
+        {
+            //We want to update the OrderHeader values in db with the values in the Current orderHeader values in the VM
+            var orderHeader = _unitOfWork.OrderHeader.GetFirstOrDefault(u => u.Id == OrderVM.OrderHeader.Id);
+            
+            if (orderHeader.PaymentStatus == SD.PaymentStatusApproved)
+            {
+                //Here we need to use the stripe protocol to do a refund
+                var options = new RefundCreateOptions
+                {
+                    Reason = RefundReasons.RequestedByCustomer,
+                    //We use Payment intent instead of charge
+                    PaymentIntent = orderHeader.PaymentIntentId,
+                    //You can either choose an amount to be payed here or leave out and full amount will be payed
+                };
+                var service = new RefundService();
+                Refund refund = service.Create(options);
+                //Update order and payment status
+                _unitOfWork.OrderHeader.UpdateStatus(orderHeader.Id,SD.StatusCancelled, SD.StatusRefunded);
+
+            }
+            else
+            {
+                //Update status to cancelled
+                _unitOfWork.OrderHeader.UpdateStatus(orderHeader.Id, SD.StatusCancelled, SD.StatusCancelled);
+            }
+            // save changes
+            _unitOfWork.Save();
+            TempData["Success"] = "Order cancelled Successfully";
             return RedirectToAction("Details", "Order", new { orderId = orderHeader.Id });
         }
 
