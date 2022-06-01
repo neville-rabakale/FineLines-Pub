@@ -1,4 +1,7 @@
-﻿@using FineLines.Utility
+﻿@using Microsoft.AspNetCore.Http
+@using FineLines.Utility
+@inject IHttpContextAccessor HttpContextAccessor
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -38,11 +41,25 @@
                                 </div>
                             </li>
                         }
+
+                        @if(HttpContextAccessor.HttpContext.Session.GetInt32(SD.SessionCart) != null)
+                        {
+                         <li class="nav-item">
+                            <a class="nav-link" asp-area="Customer" asp-controller="Cart" asp-action="Index">
+                                <i class="bi bi-cart"></i> &nbsp;
+                                (@HttpContextAccessor.HttpContext.Session.GetInt32(SD.SessionCart))
+                            </a>
+                            </li>
+                        }
+                        else
+                        {
                         <li class="nav-item">
                             <a class="nav-link" asp-area="Customer" asp-controller="Cart" asp-action="Index">
-                                <i class="bi bi-cart"></i>
+                                <i class="bi bi-cart"></i> &nbsp; (0)
                             </a>
-                        </li>
+                        </li>                            
+                        }
+
                         @if( User.IsInRole(SD.Role_Admin) || User.IsInRole(SD.Role_Employee)){
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="Admin" asp-controller="Order" asp-action="Index">
@@ -51,6 +68,8 @@
                             </li>
                         }
                         </ul>
+                         <partial name="_LoginPartial" />
+
                     @*              <form class="d-flex">
                         <input class="form-control me-sm-2" type="text" placeholder="Search">
                         <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
@@ -63,7 +82,6 @@
                         </a>
                     </li>
                 </ul>*@
-                 <partial name="_LoginPartial" />
 
             </div>
         </nav>

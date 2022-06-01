@@ -1,7 +1,9 @@
 ﻿using FineLines.DataAccess.Repositories.IRepositories;
 using FineLines.Models;
 using FineLines.Models.ViewModels;
+using FineLines.Utility;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Security.Claims;
@@ -59,14 +61,19 @@ namespace FineLinesApp.Controllers
             if(cartFromDb == null)
             {
                 _unitOfWork.ShoppingCart.Add(shoppingCart);
+                _unitOfWork.Save();
+                //add session here
+                HttpContext.Session.SetInt32(SD.SessionCart,
+                    _unitOfWork.ShoppingCart.GetAll(u=>u.ApplicationUserId == claim.Value).ToList().Count);
             }
             else
             {
                //cartFromDb.Count += shoppingCart.Count;
                 _unitOfWork.ShoppingCart.IncrementCount(cartFromDb, shoppingCart.Count);
+                _unitOfWork.Save();
+
 
             }
-            _unitOfWork.Save();
 
             return RedirectToAction(nameof(Index));
 

@@ -31,6 +31,13 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 });
 
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromSeconds(10);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 var app = builder.Build();
 
 
@@ -50,8 +57,10 @@ app.UseRouting();
 StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe:SecretKey").Get<string>();
 
 app.UseAuthentication();
-app.MapRazorPages();
 app.UseAuthorization();
+
+app.UseSession();
+app.MapRazorPages();
 
 app.MapControllerRoute(
     name: "default",
