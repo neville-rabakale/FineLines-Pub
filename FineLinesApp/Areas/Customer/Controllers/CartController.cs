@@ -70,6 +70,9 @@ namespace FineLinesApp.Areas.Customer.Controllers
             if (cart.Count <= 1)
             {
                 _unitOfWork.ShoppingCart.Remove(cart);
+                //update session by decrementing count by 1
+                var count = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == cart.ApplicationUserId).ToList().Count - 1;
+                HttpContext.Session.SetInt32(SD.SessionCart, count);
             }
             else
             {
@@ -91,6 +94,9 @@ namespace FineLinesApp.Areas.Customer.Controllers
             }
             _unitOfWork.ShoppingCart.Remove(cart);
             _unitOfWork.Save();
+            //update session by decrementing count by 1
+            var count = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == cart.ApplicationUserId).ToList().Count;
+            HttpContext.Session.SetInt32(SD.SessionCart,count);
 
             return RedirectToAction(nameof(Index));
 
