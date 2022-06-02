@@ -172,12 +172,14 @@ namespace FineLinesApp.Areas.Identity.Pages.Account
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
 
+                //Add custom fields for user
                 user.City = Input.City;
                 user.StreetAddress = Input.StreetAddress;
                 user.PhoneNumber = Input.PhoneNumber;
                 user.County = Input.County;
                 user.Name = Input.Name;
                 user.PostalCode = Input.PostalCode;
+
 
                 if (Input.Role == SD.Role_User_Comp)
                 {
