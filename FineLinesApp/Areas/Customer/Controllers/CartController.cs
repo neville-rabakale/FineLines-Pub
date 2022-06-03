@@ -239,6 +239,7 @@ namespace FineLinesApp.Areas.Customer.Controllers
             //send confirmation email -- here we can load html templated for  confirmation emails --
             _emailSender.SendEmailAsync(orderHeader.ApplicationUser.Email, "Order Confirmation - Fine Lines", "<p>Your order has been Confrimed</p>");
             List<ShoppingCart> shoppingCarts = _unitOfWork.ShoppingCart.GetAll(u => u.ApplicationUserId == orderHeader.ApplicationUserId).ToList();
+            HttpContext.Session.Clear();
             _unitOfWork.ShoppingCart.RemoveRange(shoppingCarts);
             _unitOfWork.Save();
 
