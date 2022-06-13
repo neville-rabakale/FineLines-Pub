@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FineLines.Models\FineLines.Models.csproj" />
+    <ProjectReference Include="..\FineLines.Utility\FineLines.Utility.csproj" />
   </ItemGroup>
 
 </Project>

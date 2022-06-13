@@ -25,7 +25,7 @@ namespace FineLines.Utility
             using(var emailClient = new SmtpClient())
             {
                 emailClient.Connect("smtp.gmail.com", 587, MailKit.Security.SecureSocketOptions.StartTls);
-                emailClient.Authenticate("mashi.rabs@gmail.com", "Rabakale4869");
+                emailClient.Authenticate("rabshudu678@gmail.com", "hkkaeakzsiqhaqdh");
                 emailClient.Send(emailToSend);
                 emailClient.Disconnect(true);
             }

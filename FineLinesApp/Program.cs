@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using FineLines.Utility;
 using Stripe;
+using FineLines.DataAccess.DbInitialazer;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");;
@@ -21,6 +22,7 @@ builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Str
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 builder.Services.AddSingleton<IEmailSender, EmailSender>();
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 builder.Services.AddAuthentication().AddFacebook(options =>
@@ -61,7 +63,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe:SecretKey").Get<string>();
-
+SeedDatabase();
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -74,3 +76,13 @@ app.MapControllerRoute(
 
 app.Run();
  
+
+void SeedDatabase()
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+        //Seed database
+        dbInitializer.Initialize();
+    }
+}
