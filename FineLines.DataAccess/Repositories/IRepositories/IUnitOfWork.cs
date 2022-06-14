@@ -14,7 +14,7 @@ namespace FineLines.DataAccess.Repositories.IRepositories
         ICompanyRepository Company { get; }
         IShoppingCartRepository ShoppingCart { get; }
         IApplicationUserRepository ApplicationUser { get; }
-
+        IPackagingRepository Packaging { get; }
         IOrderDetailRepository OrderDetail { get; }
         IOrderHeaderRepository OrderHeader { get; }
 

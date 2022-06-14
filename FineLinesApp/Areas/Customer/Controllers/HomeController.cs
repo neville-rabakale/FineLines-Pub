@@ -24,7 +24,7 @@ namespace FineLinesApp.Controllers
 
         public IActionResult Index()
         {
-            IEnumerable<Product> objProductList = _unitOfWork.Product.GetAll(includeProperties: "Category,CoverType");
+            IEnumerable<Product> objProductList = _unitOfWork.Product.GetAll(includeProperties: "Category,Packaging");
             return View(objProductList);
         }
 
@@ -34,7 +34,7 @@ namespace FineLinesApp.Controllers
             {
                 Count = 1,
                 ProductId = productId,
-                Product  = _unitOfWork.Product.GetFirstOrDefault(u => u.Id == productId, includeProperties: "Category,CoverType")
+                Product  = _unitOfWork.Product.GetFirstOrDefault(u => u.Id == productId, includeProperties: "Category,Packaging")
             };
         
             return View(cartObj);

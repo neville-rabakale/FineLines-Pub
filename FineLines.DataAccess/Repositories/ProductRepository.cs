@@ -33,7 +33,7 @@ namespace FineLines.DataAccess.Repositories
                 objFromDb.Description = obj.Description;
                 objFromDb.Author = obj.Author;
                 objFromDb.CategoryId = obj.CategoryId;
-                objFromDb.CoverTypeId = obj.CoverTypeId;
+                objFromDb.PackagingId = obj.PackagingId;
                 if(obj.ImageUrl != null)
                 {
                     objFromDb.ImageUrl = obj.ImageUrl;

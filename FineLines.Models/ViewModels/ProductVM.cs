@@ -17,5 +17,8 @@ namespace FineLines.Models.ViewModels
 
         [ValidateNever]
         public IEnumerable<SelectListItem> CoverTypeList { get; set; }
+
+        [ValidateNever]
+        public IEnumerable<SelectListItem> PackagingList { get; set; }
     }
 }
