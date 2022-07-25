@@ -10,7 +10,7 @@ using Stripe;
 using FineLines.DataAccess.DbInitialazer;
 
 var builder = WebApplication.CreateBuilder(args);
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");;
+var connectionString = builder.Configuration["DefaultConnection"]; ;
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));;
@@ -25,10 +25,14 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 builder.Services.AddSingleton<IEmailSender, EmailSender>();
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
+
+var fbSecret = builder.Configuration["FbSecret"];
+var StripeSecret = builder.Configuration["SecretKey"];
+
 builder.Services.AddAuthentication().AddFacebook(options =>
 {
     options.AppId = "376348111137800";
-    options.AppSecret = "9a106331485bcb1ab883eaee526ca634";
+    options.AppSecret = fbSecret;
 });
 
 builder.Services.ConfigureApplicationCookie(options =>
@@ -46,6 +50,7 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+
 var app = builder.Build();
 
 
@@ -62,7 +67,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe:SecretKey").Get<string>();
+StripeConfiguration.ApiKey = builder.Configuration.GetSection(StripeSecret).Get<string>();
 SeedDatabase();
 app.UseAuthentication();
 app.UseAuthorization();
