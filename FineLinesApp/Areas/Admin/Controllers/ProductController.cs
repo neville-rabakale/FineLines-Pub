@@ -43,7 +43,7 @@ namespace FineLinesApp.Controllers
                         Text = u.Name,
                         Value = u.Id.ToString()
                     }),
-                CoverTypeList = _unitOfWork.CoverType.GetAll().Select(
+                PackagingList = _unitOfWork.Packaging.GetAll().Select(
                     u => new SelectListItem
                     {
                         Text = u.Name,
@@ -144,7 +144,7 @@ namespace FineLinesApp.Controllers
         //ret json because it is for the "datatables.net datatable
         public IActionResult GetAll()
         {
-            var productList = _unitOfWork.Product.GetAll(includeProperties: "Category,CoverType");
+            var productList = _unitOfWork.Product.GetAll(includeProperties: "Category,Packaging");
             return Json(new { data = productList });
         }
 

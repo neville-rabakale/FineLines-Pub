@@ -4,6 +4,7 @@ using FineLines.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FineLinesApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220614114425_AddedPackagingToDb")]
+    partial class AddedPackagingToDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -231,6 +233,9 @@ namespace FineLinesApp.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
+                    b.Property<int>("CoverTypeId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -241,9 +246,6 @@ namespace FineLinesApp.Migrations
 
                     b.Property<double>("ListPrice")
                         .HasColumnType("float");
-
-                    b.Property<int>("PackagingId")
-                        .HasColumnType("int");
 
                     b.Property<double>("Price")
                         .HasColumnType("float");
@@ -262,7 +264,7 @@ namespace FineLinesApp.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.HasIndex("PackagingId");
+                    b.HasIndex("CoverTypeId");
 
                     b.ToTable("Products");
                 });
@@ -565,15 +567,15 @@ namespace FineLinesApp.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("FineLines.Models.Packaging", "Packaging")
+                    b.HasOne("FineLines.Models.CoverType", "CoverType")
                         .WithMany()
-                        .HasForeignKey("PackagingId")
+                        .HasForeignKey("CoverTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Category");
 
-                    b.Navigation("Packaging");
+                    b.Navigation("CoverType");
                 });
 
             modelBuilder.Entity("FineLines.Models.ShoppingCart", b =>

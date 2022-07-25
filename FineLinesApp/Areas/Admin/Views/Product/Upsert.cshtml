@@ -54,16 +54,16 @@
                 <input type="file" id="uploadBox" name="file" class="form-control" />
             </div>
             <div class="mb-3 col-6">
-                <label asp-for="product.CategoryId"></label>
+                <label asp-for="product.Category"></label>
                 <select asp-for="product.CategoryId" asp-items="@Model.CategoryList" class="form-select">
                     <option disabled selected>==Select Category==</option>
                 </select>
                 <span asp-validation-for="product.CategoryId" class="text-danger"></span>
             </div>
             <div class="mb-3 col-6">
-                <label asp-for="product.CoverTypeId"></label>
-                <select asp-for="product.CoverTypeId" asp-items="@Model.CoverTypeList" class="form-select">
-                    <option disabled selected>==Select Cover Type==</option>
+                <label asp-for="product.Packaging"></label>
+                <select asp-for="product.PackagingId" asp-items="@Model.PackagingList" class="form-select">
+                    <option disabled selected>==Select Package Type==</option>
                 </select>
             </div>
             <div class="col-12">

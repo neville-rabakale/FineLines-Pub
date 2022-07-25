@@ -17,6 +17,7 @@ namespace FineLines.Models
         public string Title { get; set; }
         public string Description { get; set; }
         [Required]
+        [Display(Name = "Artist")]
         public string Author { get; set; }
         [Required]
         [Range(1, 10000)]
@@ -35,10 +36,10 @@ namespace FineLines.Models
         [ValidateNever]
         public Category Category { get; set; }
         [Required]
-        public int CoverTypeId { get; set; }
-        [ForeignKey("CoverTypeId")]
+        public int PackagingId { get; set; }
+        [ForeignKey("PackagingId")]
         [ValidateNever]
-        public CoverType CoverType { get; set; }
+        public Packaging Packaging { get; set; }
 
 
     }
